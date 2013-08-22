@@ -2,22 +2,21 @@ import java.util.*;
 
 public class RadixSorter {
 
-	public void LSD(String[] a, int W) {
+	public void LSD(String[] a, int W, int R) {
 		if (a.length <= 1) {
 			return;
 		}
-		int R = 10;
 		String [] aux = new String[a.length];
 		for (int j = W - 1; j >= 0; --j) {
 			int [] count = new int[R + 1];
 			for (int i = 0; i < a.length; ++i) {
-				++count[a[i].charAt(j) - '0' + 1];
+				++count[a[i].charAt(j) + 1];
 			}
 			for (int k = 1; k <= R; ++k) {
 				count[k] += count[k - 1];
 			}
 			for (int i = 0; i < a.length; ++i) {
-				int radix = a[i].charAt(j) - '0';
+				int radix = a[i].charAt(j) + 0;
 				aux[count[radix]] = a[i];
 				++count[radix];
 			}
@@ -29,17 +28,16 @@ public class RadixSorter {
 
 	public int charAt(String s, int d) {
 		if (d < s.length()) {
-			return s.charAt(d) - '0';
+			return s.charAt(d);
 		} else {
 			return -1;
 		}
 	}
 
-	public void MSD(String[] a, int begin, int end, int d, String[] aux) {
+	public void MSD(String[] a, int begin, int end, int d, String[] aux, int R) {
 		if (begin >= end) {
 			return;
 		}
-		int R = 10;
 
 		int[] count = new int[R + 2];
 		for (int i = begin; i <= end; ++i) {
@@ -57,16 +55,15 @@ public class RadixSorter {
 			a[i] = aux[i - begin];
 		}
 		for (int r = 0; r <= R; ++r) {
-			MSD(a, begin + count[r], begin + count[r + 1] - 1, d + 1, aux);
+			MSD(a, begin + count[r], begin + count[r + 1] - 1, d + 1, aux, R);
 		}
 	}
 
-	public void MSD_opt(String[] a, int begin, int end, int d, String[] aux) {
-		if (end <= begin + 10) {
+	public void MSD_opt(String[] a, int begin, int end, int d, String[] aux, int R, int M) {
+		if (end <= begin + M) {
 			insertionSort(a, begin, end);
 			return;
 		}
-		int R = 10;
 
 		int[] count = new int[R + 2];
 		for (int i = begin; i <= end; ++i) {
@@ -84,7 +81,7 @@ public class RadixSorter {
 			a[i] = aux[i - begin];
 		}
 		for (int r = 0; r <= R; ++r) {
-			MSD(a, begin + count[r], begin + count[r + 1] - 1, d + 1, aux);
+			MSD_opt(a, begin + count[r], begin + count[r + 1] - 1, d + 1, aux, R, M);
 		}
 	}
 	
@@ -107,9 +104,10 @@ public class RadixSorter {
 	}
 
 	public static void main(String args[]) {
-		int N = 100000;
+		int N = 1000000;
 		int W = 10;
-		int R = 10;
+		int R = 256;
+		int M = 10;
 		Random rand = new Random(0);
 		String[] array1 = new String[N];
 		String[] array2 = new String[N];
@@ -118,7 +116,7 @@ public class RadixSorter {
 		for (int i = 0; i < array1.length; ++i) {
 			array1[i] = "";
 			for (int x = 0; x < W; ++x) {
-				array1[i] += (int)Math.abs(rand.nextInt()) % R;
+				array1[i] += (char)((int)Math.abs(rand.nextInt()) % R);
 			}
 			array2[i] = array1[i];
 			array3[i] = array1[i];
@@ -136,7 +134,7 @@ public class RadixSorter {
 
 		// LSD
 		t1 = System.currentTimeMillis();
-		new RadixSorter().LSD(array2, W);
+		new RadixSorter().LSD(array2, W, R);
 		t2 = System.currentTimeMillis();
 //		for (string s : array) {
 //			System.out.println(s);
@@ -145,7 +143,7 @@ public class RadixSorter {
 
 		// MSD
 		t1 = System.currentTimeMillis();
-		new RadixSorter().MSD(array3, 0, array3.length - 1, 0, aux);
+		new RadixSorter().MSD(array3, 0, N - 1, 0, aux, R);
 		t2 = System.currentTimeMillis();
 //		for (String s : array) {
 //			System.out.println(s);
@@ -154,7 +152,7 @@ public class RadixSorter {
 
 		// MSD + insertionSort
 		t1 = System.currentTimeMillis();
-		new RadixSorter().MSD_opt(array4, 0, array4.length - 1, 0, aux);
+		new RadixSorter().MSD_opt(array4, 0, N - 1, 0, aux, R, M);
 		t2 = System.currentTimeMillis();
 //		for (String s : array) {
 //			System.out.println(s);
