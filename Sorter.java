@@ -26,6 +26,31 @@ public class Sorter {
 		quickSort(A, j + 1, end);
 	}
 
+	public void quickSort_opt(int [] A, int start, int end) {
+		if (end <= start + 20) {
+			insertionSort(A, start, end);
+			return;
+		}
+
+		int i = start;
+		int j = end;
+		int cutter = A[i];
+		while (i < j) {
+			if (A[j] >= cutter) {
+				--j;
+				continue;
+			} else if (A[i] < cutter) {
+				++i;
+				continue;
+			}
+			int temp = A[i];
+			A[i] = A[j];
+			A[j] = temp;
+		}
+		quickSort_opt(A, start, j);
+		quickSort_opt(A, j + 1, end);
+	}
+
 	public void insertionSort(int [] A, int start, int end) {
 		if (start >= end) {
 			return;
@@ -136,16 +161,9 @@ public class Sorter {
 		}
 	}
 
-	public void radixSort(int[] A) {
-
-
-
-
-	}
-
 	public static void main(String args[]) {
 
-		int N = 100000;
+		int N = 1000000;
 		boolean debug = false;
 		long t1 = 0, t2 = 0;
 
@@ -155,12 +173,14 @@ public class Sorter {
 		int[] array3 = new int[N];
 		int[] array4 = new int[N];
 		int[] array5 = new int[N];
+		int[] array6 = new int[N];
 		for (int i = 0; i < N; ++i) {
 			array1[i] = Math.abs(rand.nextInt());
 			array2[i] = array1[i];
 			array3[i] = array1[i];
 			array4[i] = array1[i];
 			array5[i] = array1[i];
+			array6[i] = array1[i];
 		}
 
 		if (debug) {
@@ -177,29 +197,35 @@ public class Sorter {
 		System.out.println("Arrays.sort   = " + (t2 - t1));
 
 		// insertionSort
-		t1 = System.currentTimeMillis();
-		new Sorter().insertionSort(array2, 0, array2.length - 1);
-		t2 = System.currentTimeMillis();
-		System.out.println("insertionSort = " + (t2 - t1));
+//		t1 = System.currentTimeMillis();
+//		new Sorter().insertionSort(array2, 0, array2.length - 1);
+//		t2 = System.currentTimeMillis();
+//		System.out.println("insertionSort = " + (t2 - t1));
 
-		// quickSort
-		t1 = System.currentTimeMillis();
-		new Sorter().quickSort(array3, 0, array3.length - 1);
-		t2 = System.currentTimeMillis();
-		System.out.println("quickSort     = " + (t2 - t1));
 
 		// mergeSort
 		t1 = System.currentTimeMillis();
-		new Sorter().mergeSort(array4, 0, array4.length - 1);
+		new Sorter().mergeSort(array3, 0, array3.length - 1);
 		t2 = System.currentTimeMillis();
 		System.out.println("mergeSort     = " + (t2 - t1));
 
 		// heapSort
 		t1 = System.currentTimeMillis();
-		new Sorter().heapSort(array5);
+		new Sorter().heapSort(array4);
 		t2 = System.currentTimeMillis();
 		System.out.println("heapSort      = " + (t2 - t1));
 
+		// quickSort
+		t1 = System.currentTimeMillis();
+		new Sorter().quickSort(array5, 0, array5.length - 1);
+		t2 = System.currentTimeMillis();
+		System.out.println("quickSort     = " + (t2 - t1));
+
+		// quickSort_opt, with insertionSort
+		t1 = System.currentTimeMillis();
+		new Sorter().quickSort_opt(array6, 0, array6.length - 1);
+		t2 = System.currentTimeMillis();
+		System.out.println("quickSort_opt = " + (t2 - t1));
 
 		if (debug) {
 			for (int i = 0; i < N; ++i) {
