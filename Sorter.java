@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class Sorter {
-
 	public void quickSort(int [] A, int start, int end) {
 		if (start >= end) {
 			return;
