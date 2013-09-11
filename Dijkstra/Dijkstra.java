@@ -150,5 +150,3 @@ public class Dijkstra {
 		System.out.println(dj.pathTo(1));
 	}
 }
-
-	
