@@ -30,10 +30,10 @@ class Item:
 #
 #	0  mia  1  danced  2
 #
-#    0  1  2
+#	    0  1  2
 #	0  [] [] []
 #	1  [] [] []
-# 2  [] [] []
+#	2  [] [] []
 #
 def debug(st, chart, grammar):
 	print "=================="
@@ -52,11 +52,7 @@ def debug(st, chart, grammar):
 	print "================================="
 
 def parse(grammar, sent):
-	st = []
-	tempItem = Item(False, 1, 2, 1, "IV", ["danced"])
-	st.append(tempItem)
-	tempItem = Item(False, 0, 1, 1, "PN", ["mia"])
-	st.append(tempItem)
+	st = [Item(False, 1, 2, 1, "IV", ["danced"]), Item(False, 0, 1, 1, "PN", ["mia"])]
 	chart = [ [ [] for j in range(len(sent) + 1)] for i in range(len(sent) + 1)]
 
 	debug(st, chart, grammar)
@@ -76,13 +72,9 @@ def parse(grammar, sent):
 				for itemAfter in chart[item.j][colIndex]:
 					if not itemAfter.active and anchor == itemAfter.left:
 						if item.dot == len(item.right) - 1:
-							tempItem = Item(False, item.i, itemAfter.j, item.i + 1,
-											item.left, item.right)
-							st.append(tempItem)
+							st.append(Item(False, item.i, itemAfter.j, item.i + 1, item.left, item.right))
 						else:
-							tempItem = Item(True, item.i, itemAfter.j, item.i + 1,
-											item.left, item.right)
-							st.append(tempItem)
+							st.append(Item(True, item.i, itemAfter.j, item.i + 1, item.left, item.right))
 		else: # passive item
 			# step 3: combine, look for a left active item
 			anchor = item.left
@@ -90,18 +82,13 @@ def parse(grammar, sent):
 				for itemBefore in chart[rowIndex][item.i]:
 					if itemBefore.active and itemBefore.right[itemBefore.dot] == anchor:
 						if itemBefore.dot == len(itemBefore.right) - 1:
-							tempItem = Item(False, itemBefore.i, item.j, itemBefore.i + 1,
-											itemBefore.left, itemBefore.right)
-							st.append(tempItem)
+							st.append(Item(False, itemBefore.i, item.j, itemBefore.i + 1, itemBefore.left, itemBefore.right))
 						else:
-							tempItem = Item(True, itemBefore.i, item.j, itemBefore.i + 1,
-											itemBefore.left, itemBefore.right)
-							st.append(tempItem)
+							st.append(Item(True, itemBefore.i, item.j, itemBefore.i + 1, itemBefore.left, itemBefore.right))
 			# step 4: generate new
 			for g in grammar:
 				if g.right[0] == item.left:
-					tempItem = Item(True, item.i, item.i, 0, g.left, g.right)
-					st.append(tempItem)
+					st.append(Item(True, item.i, item.i, 0, g.left, g.right))
 		debug(st, chart, grammar)
 
 
@@ -113,20 +100,13 @@ def parse(grammar, sent):
 
 if __name__ == "__main__":
 
-	grammar = []
-	tempRule = Rule("S", ["NP", "VP"])
-	grammar.append(tempRule)
-	tempRule = Rule("S", ["NP", "VP", "PP"])
-	grammar.append(tempRule)
-	tempRule = Rule("NP", ["PN"])
-	grammar.append(tempRule)
-	tempRule = Rule("VP", ["IV"])
-	grammar.append(tempRule)
-	tempRule = Rule("PN", ["mia"])
-	grammar.append(tempRule)
-	tempRule = Rule("IV", ["danced"])
-	grammar.append(tempRule)
-
+	grammar = [ Rule("S", ["NP", "VP"]),
+	 			Rule("S", ["NP", "VP", "PP"]),
+				Rule("NP", ["PN"]),
+				Rule("VP", ["IV"]),
+				Rule("PN", ["mia"]),
+				Rule("IV", ["danced"]),
+			  ]
 	sent = ["mia", "danced"]
 
 	print parse(grammar, sent)
