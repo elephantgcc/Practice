@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding : utf-8 -*-
 
+# Thanks for the great reference from:
+# http://cs.union.edu/~striegnk/courses/nlp-with-prolog/html/node66.html
+
 class Rule:
 	left = ""
 	right = []
